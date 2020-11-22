@@ -46,7 +46,7 @@
       </div>
     </div>
     <div class="buttons is-centered">
-      <a class="button is-info is-outlined">ログイン</a><br />
+      <a class="button is-info is-outlined" @click="login">ログイン</a><br />
     </div>
     <div>
       <router-link to="/register">新規登録はこちら</router-link>
@@ -61,6 +61,23 @@ export default {
       email: '',
       password: '',
     };
+  },
+  methods: {
+    login() {
+      this.$store.dispatch('getUser', {
+        email: this.email,
+      });
+
+      this.$store.dispatch('login', {
+        email: this.email,
+        password: this.password,
+        returnSecureToken: true,
+      });
+
+      this.name = '';
+      this.email = '';
+      this.password = '';
+    },
   },
 };
 </script>

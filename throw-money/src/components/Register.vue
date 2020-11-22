@@ -84,11 +84,6 @@ export default {
   },
   methods: {
     register() {
-      this.$store.dispatch('register', {
-        email: this.email,
-        password: this.password,
-      });
-
       firestore
         .post('/users', {
           fields: {
@@ -98,6 +93,9 @@ export default {
             email: {
               stringValue: this.email,
             },
+            Balance: {
+              integerValue: '0',
+            },
           },
         })
         .then((response) => {
@@ -106,6 +104,13 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+
+      this.$store.commit('updateName', this.name);
+
+      this.$store.dispatch('register', {
+        email: this.email,
+        password: this.password,
+      });
 
       this.name = '';
       this.email = '';
