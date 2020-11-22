@@ -43,6 +43,9 @@ const store = new Vuex.Store({
                 email: {
                   stringValue: asyncData.email,
                 },
+                balance: {
+                  integerValue: '0',
+                },
               },
             })
             .then(() => {
@@ -68,6 +71,7 @@ const store = new Vuex.Store({
         })
         .then((response) => {
           commit('updateIdToken', response.data.idToken);
+          router.push('/dashboard');
         })
         .catch((error) => {
           console.log(error);
