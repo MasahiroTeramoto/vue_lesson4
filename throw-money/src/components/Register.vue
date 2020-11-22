@@ -73,7 +73,6 @@
 </template>
 
 <script>
-import { firestore } from '../utils/firebase';
 export default {
   data() {
     return {
@@ -84,30 +83,8 @@ export default {
   },
   methods: {
     register() {
-      firestore
-        .post('/users', {
-          fields: {
-            name: {
-              stringValue: this.name,
-            },
-            email: {
-              stringValue: this.email,
-            },
-            Balance: {
-              integerValue: '0',
-            },
-          },
-        })
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-      this.$store.commit('updateName', this.name);
-
       this.$store.dispatch('register', {
+        name: this.name,
         email: this.email,
         password: this.password,
       });

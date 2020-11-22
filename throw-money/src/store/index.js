@@ -33,7 +33,25 @@ const store = new Vuex.Store({
         })
         .then((response) => {
           commit('updateIdToken', response.data.idToken);
-          router.push('/dashboard');
+
+          firestore
+            .post('/users', {
+              fields: {
+                name: {
+                  stringValue: asyncData.name,
+                },
+                email: {
+                  stringValue: asyncData.email,
+                },
+              },
+            })
+            .then(() => {
+              commit('updateName', asyncData.name);
+              router.push('/dashboard');
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         })
         .catch((error) => {
           console.log(error);
@@ -50,7 +68,6 @@ const store = new Vuex.Store({
         })
         .then((response) => {
           commit('updateIdToken', response.data.idToken);
-          router.push('/dashboard');
         })
         .catch((error) => {
           console.log(error);
