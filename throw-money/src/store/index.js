@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { auth } from '../utils/firebase';
+import { auth, firestore } from '../utils/firebase';
 import * as settings from './settings';
 
 Vue.use(Vuex);
@@ -15,6 +15,9 @@ const store = new Vuex.Store({
     idToken: (state) => state.idToken,
   },
   mutations: {
+    updateName(state, name) {
+      state.name = name;
+    },
     updateIdToken(state, idToken) {
       state.idToken = idToken;
     },
@@ -29,6 +32,25 @@ const store = new Vuex.Store({
         })
         .then((response) => {
           commit('updateIdToken', response.data.idToken);
+
+          firestore
+            .post('/users', {
+              fields: {
+                name: {
+                  stringValue: asyncData.name,
+                },
+                email: {
+                  stringValue: asyncData.email,
+                },
+              },
+            })
+            .then((response) => {
+              commit('updateName', asyncData.name);
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         })
         .catch((error) => {
           console.log(error);
