@@ -9,18 +9,23 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     name: '',
+    balance: 0,
     idToken: '',
   },
   getters: {
     name: (state) => state.name,
+    balance: (state) => state.balance,
     idToken: (state) => state.idToken,
   },
   mutations: {
-    updateIdToken(state, idToken) {
-      state.idToken = idToken;
-    },
     updateName(state, name) {
       state.name = name;
+    },
+    updateBalance(state, balance) {
+      state.balance = balance;
+    },
+    updateIdToken(state, idToken) {
+      state.idToken = idToken;
     },
   },
   actions: {
@@ -50,6 +55,7 @@ const store = new Vuex.Store({
             })
             .then(() => {
               commit('updateName', asyncData.name);
+              commit('updateBalance', 0);
               router.push('/dashboard');
             })
             .catch((error) => {
@@ -82,11 +88,12 @@ const store = new Vuex.Store({
       console.log('email: ' + asyncData.email);
       firestore.get('/users').then((response) => {
         const users = response.data.documents;
-        const user = users.filter(
+        const filteredUser = users.filter(
           (user) => user.fields.email.stringValue === asyncData.email
         );
-
-        commit('updateName', user[0].fields.name.stringValue);
+        console.log(filteredUser);
+        commit('updateName', filteredUser[0].fields.name.stringValue);
+        commit('updateBalance', filteredUser[0].fields.balance.integerValue);
       });
     },
   },
