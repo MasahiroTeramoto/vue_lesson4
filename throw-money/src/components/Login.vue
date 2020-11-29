@@ -55,6 +55,9 @@
 </template>
 
 <script>
+import auth from '../plugin/auth.js';
+import router from '../router';
+
 export default {
   data() {
     return {
@@ -64,17 +67,10 @@ export default {
   },
   methods: {
     login() {
-      this.$store.dispatch('getUser', {
-        email: this.email,
-      });
-
-      this.$store.dispatch('login', {
-        email: this.email,
-        password: this.password,
-        returnSecureToken: true,
-      });
-
-      this.name = '';
+      auth
+        .login(this.email, this.password)
+        .then(() => router.push('/dashboard'))
+        .catch((error) => console.log(error));
       this.email = '';
       this.password = '';
     },

@@ -64,7 +64,7 @@
       </div>
     </div>
     <div class="buttons is-centered">
-      <a class="button is-info is-outlined" @click="register">新規登録</a><br />
+      <a class="button is-info is-outlined" @click="signUp">新規登録</a><br />
     </div>
     <div>
       <router-link to="/">ログインはこちら</router-link>
@@ -73,6 +73,10 @@
 </template>
 
 <script>
+import router from '../router';
+import auth from '../plugin/auth.js';
+import Users from '../models/users';
+
 export default {
   data() {
     return {
@@ -82,13 +86,22 @@ export default {
     };
   },
   methods: {
-    register() {
-      this.$store.dispatch('register', {
-        name: this.name,
-        email: this.email,
-        password: this.password,
-      });
-
+    signUp() {
+      const name = this.name;
+      const email = this.email;
+      auth
+        .signUp(this.email, this.password)
+        .then(() => {
+          const user = auth.getCurrentUser();
+          Users.createUser(user.uid, name, email)
+            .then(() => router.push('/dashboard'))
+            .catch((err) =>
+              console.log(`An error occurred while creating the user: ${err}`)
+            );
+        })
+        .catch((err) =>
+          console.log(`An error occurred during user registration: ${err}`)
+        );
       this.name = '';
       this.email = '';
       this.password = '';

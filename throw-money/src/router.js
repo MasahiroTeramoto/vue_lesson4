@@ -3,7 +3,7 @@ import Router from 'vue-router';
 import Login from './components/Login.vue';
 import Register from './components/Register.vue';
 import DashBoard from './components/DashBoard';
-import store from './store';
+import firebase from 'firebase';
 
 Vue.use(Router);
 
@@ -14,39 +14,35 @@ const router = new Router({
       path: '/',
       name: Login,
       component: Login,
-      beforeEnter(to, from, next) {
-        if (store.getters.idToken) {
-          next('/dashboard');
-        } else {
-          next();
-        }
-      },
     },
     {
       path: '/register',
       name: Register,
       component: Register,
-      beforeEnter(to, from, next) {
-        if (store.getters.idToken) {
-          next('/dashboard');
-        } else {
-          next();
-        }
-      },
     },
     {
       path: '/dashboard',
       name: DashBoard,
       component: DashBoard,
-      beforeEnter(to, from, next) {
-        if (store.getters.idToken) {
-          next();
-        } else {
-          next('/');
-        }
-      },
+      meta: { requiresAuth: true },
     },
   ],
 });
 
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  const currentUser = firebase.auth().currentUser;
+  if (requiresAuth) {
+    if (!currentUser) {
+      next({
+        path: '/',
+        query: { redirect: to.fullPath },
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
 export default router;
