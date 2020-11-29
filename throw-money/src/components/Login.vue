@@ -46,7 +46,7 @@
       </div>
     </div>
     <div class="buttons is-centered">
-      <a class="button is-info is-outlined">ログイン</a><br />
+      <a class="button is-info is-outlined" @click="login">ログイン</a><br />
     </div>
     <div>
       <router-link to="/register">新規登録はこちら</router-link>
@@ -55,12 +55,25 @@
 </template>
 
 <script>
+import auth from '../plugin/auth.js';
+import router from '../router';
+
 export default {
   data() {
     return {
       email: '',
       password: '',
     };
+  },
+  methods: {
+    login() {
+      auth
+        .login(this.email, this.password)
+        .then(() => router.push('/dashboard'))
+        .catch((error) => console.log(error));
+      this.email = '';
+      this.password = '';
+    },
   },
 };
 </script>
